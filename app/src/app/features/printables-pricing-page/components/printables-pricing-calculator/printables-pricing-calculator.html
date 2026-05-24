@@ -1,0 +1,232 @@
+<section class="product-form">
+
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <div class="product-form__header">
+    <div class="product-form__title-group">
+      <span class="product-form__accent-bar"></span>
+      <div>
+        <h1 class="product-form__title">NEW PRODUCT</h1>
+        <p class="product-form__subtitle">Configure 3D print parameters then calculate a price estimate</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Form card ──────────────────────────────────────────────────────── -->
+  <div class="product-form__card" [formGroup]="form">
+
+    <!-- ── Section: Layer Height chips ────────────────────────────────── -->
+    <fieldset class="product-form__section">
+      <div class="product-form__section-label">
+        <span class="product-form__section-bar"></span>
+        <legend class="product-form__section-title">Layer Height</legend>
+      </div>
+      <div class="product-form__chips">
+        @for (opt of layerHeightOptions; track opt.value) {
+          <button
+            type="button"
+            class="product-form__chip"
+            [class.product-form__chip--active]="selectedLayerHeight === opt.value"
+            (click)="setLayerHeight(opt.value)"
+            [attr.aria-pressed]="selectedLayerHeight === opt.value"
+          >
+            {{ opt.label }}
+          </button>
+        }
+      </div>
+    </fieldset>
+
+    <!-- ── Section: Layer Width chips ─────────────────────────────────── -->
+    <fieldset class="product-form__section">
+      <div class="product-form__section-label">
+        <span class="product-form__section-bar"></span>
+        <legend class="product-form__section-title">Layer Width</legend>
+      </div>
+      <div class="product-form__chips">
+        @for (opt of layerWidthOptions; track opt.value) {
+          <button
+            type="button"
+            class="product-form__chip"
+            [class.product-form__chip--active]="selectedLayerWidth === opt.value"
+            (click)="setLayerWidth(opt.value)"
+            [attr.aria-pressed]="selectedLayerWidth === opt.value"
+          >
+            {{ opt.label }}
+          </button>
+        }
+      </div>
+    </fieldset>
+
+    <!-- ── Section: Mass (free input) ─────────────────────────────────── -->
+    <fieldset class="product-form__section">
+      <div class="product-form__section-label">
+        <span class="product-form__section-bar"></span>
+        <legend class="product-form__section-title">Mass</legend>
+      </div>
+      <div class="product-form__field">
+        <label class="product-form__label" for="mass">Weight of the print</label>
+        <div class="product-form__input-wrap">
+          <input
+            id="mass"
+            class="product-form__input"
+            [class.product-form__input--error]="form.controls.mass.invalid && form.controls.mass.touched"
+            type="number"
+            step="1"
+            min="0.01"
+            placeholder="0"
+            [value]="form.controls.mass.value ?? ''"
+            (input)="setMass($any($event.target).value)"
+          />
+          <span class="product-form__unit">g</span>
+        </div>
+        @if (form.controls.mass.invalid && form.controls.mass.touched) {
+          <span class="product-form__error">Mass is required and must be greater than 0</span>
+        }
+      </div>
+    </fieldset>
+
+    <!-- ── Section: Plastic material chips ────────────────────────────── -->
+    <fieldset class="product-form__section">
+      <div class="product-form__section-label">
+        <span class="product-form__section-bar"></span>
+        <legend class="product-form__section-title">Plastic Material</legend>
+      </div>
+      <div class="product-form__chips">
+        @for (opt of plasticOptions; track opt.id) {
+          <button
+            type="button"
+            class="product-form__chip"
+            [class.product-form__chip--active]="selectedPlastic === opt.id"
+            (click)="selectPlastic(opt.id)"
+            [attr.aria-pressed]="selectedPlastic === opt.id"
+          >
+            {{ opt.label }}
+          </button>
+        }
+      </div>
+    </fieldset>
+
+    <!-- ── Section: Image Upload ───────────────────────────────────────── -->
+    <fieldset class="product-form__section">
+      <div class="product-form__section-label">
+        <span class="product-form__section-bar"></span>
+        <legend class="product-form__section-title">Product Image</legend>
+      </div>
+
+      @if (!form.controls.imagePreview.value) {
+        <label
+          class="product-form__upload"
+          [class.product-form__upload--dragover]="isDragOver()"
+          for="image-input"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave()"
+          (drop)="onDrop($event)"
+        >
+          <span class="product-form__upload-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M12 16V8M12 8L9 11M12 8L15 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M3 15C3 17.8284 3 19.2426 3.87868 20.1213C4.75736 21 6.17157 21 9 21H15C17.8284 21 19.2426 21 20.1213 20.1213C21 19.2426 21 17.8284 21 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M3 12C3 9.17157 3 7.75736 3.87868 6.87868C4.75736 6 6.17157 6 9 6H15C17.8284 6 19.2426 6 20.1213 6.87868C21 7.75736 21 9.17157 21 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 3"/>
+            </svg>
+          </span>
+          <span class="product-form__upload-text">Click or drop image here</span>
+          <span class="product-form__upload-hint">PNG · JPG · WebP — up to 10 MB</span>
+          <input
+            id="image-input"
+            class="product-form__upload-input"
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            (change)="onFileSelected($event)"
+          />
+        </label>
+      } @else {
+        <div class="product-form__preview">
+          <img
+            class="product-form__preview-img"
+            [src]="form.controls.imagePreview.value"
+            alt="Product preview"
+          />
+          <button
+            type="button"
+            class="product-form__preview-remove"
+            (click)="removeImage()"
+            aria-label="Remove image"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <span class="product-form__preview-name">
+            {{ form.controls.imageFile.value?.name ?? '' }}
+          </span>
+        </div>
+      }
+    </fieldset>
+
+<!--    &lt;!&ndash; ── Section: Customization Price ───────────────────────────────── &ndash;&gt;-->
+<!--    <fieldset class="product-form__section">-->
+<!--      <div class="product-form__section-label">-->
+<!--        <span class="product-form__section-bar"></span>-->
+<!--        <legend class="product-form__section-title">Customization Price</legend>-->
+<!--      </div>-->
+<!--      <div class="product-form__field product-form__field&#45;&#45;price">-->
+<!--        <label class="product-form__label" for="custom-price">Price for Customization</label>-->
+<!--        <div class="product-form__input-wrap">-->
+<!--          <span class="product-form__currency">$</span>-->
+<!--          <input-->
+<!--            id="custom-price"-->
+<!--            class="product-form__input product-form__input&#45;&#45;price"-->
+<!--            type="number"-->
+<!--            step="0.01"-->
+<!--            min="0"-->
+<!--            placeholder="0.00"-->
+<!--            [value]="form.controls.customizationPrice.value ?? ''"-->
+<!--            (input)="setCustomizationPrice($any($event.target).value)"-->
+<!--          />-->
+<!--          <span class="product-form__unit">USD</span>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </fieldset>-->
+
+    <!-- ── Actions ────────────────────────────────────────────────────── -->
+    <div class="product-form__actions">
+      <button
+        type="button"
+        class="product-form__btn product-form__btn--primary"
+        [class.product-form__btn--disabled]="!isValid"
+        [attr.aria-disabled]="!isValid"
+        (click)="onCalculate()"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="product-form__btn-icon">
+          <path d="M9 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M13 3h5m0 0v5m0-5L12 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Calculate Price
+      </button>
+
+      <button
+        type="button"
+        class="product-form__btn product-form__btn--ghost"
+        (click)="onReset()"
+      >
+        Reset Form
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ── Price result + save ────────────────────────────────────────────── -->
+  @if (priceEstimate(); as estimate) {
+      <p class="product-form__result-row product-form__result-row--total">
+        <span>Total</span>
+        <strong>${{ estimate }}</strong>
+      </p>
+    <button
+      type="button"
+      class="product-form__btn product-form__btn--primary"
+      (click)="onSaveProduct()"
+    >
+      Save Product
+    </button>
+  }
+
+</section>

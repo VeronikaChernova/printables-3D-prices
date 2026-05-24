@@ -1,0 +1,157 @@
+<section class="product-list">
+
+  <!-- ── Table wrapper (horizontal scroll on small screens) ────────────── -->
+  <div class="product-list__table-wrap">
+    <table class="product-list__table" role="table" aria-label="Product list">
+
+      <!-- ── Column headers ─────────────────────────────────────────────── -->
+      <thead class="product-list__thead">
+      <tr class="product-list__head-row">
+        <th class="product-list__th product-list__th--img"     scope="col">IMG</th>
+        <th class="product-list__th product-list__th--name"    scope="col">Product / Material</th>
+        <th class="product-list__th product-list__th--lh"      scope="col">Layer H</th>
+        <th class="product-list__th product-list__th--lw"      scope="col">Layer W</th>
+        <th class="product-list__th product-list__th--mass"    scope="col">Mass</th>
+        <th class="product-list__th product-list__th--type"    scope="col">Type</th>
+        <th class="product-list__th product-list__th--price"   scope="col">Price</th>
+        <th class="product-list__th product-list__th--status"  scope="col">Status</th>
+        <th class="product-list__th product-list__th--actions" scope="col">
+          <span class="product-list__sr-only">Actions</span>
+        </th>
+      </tr>
+      </thead>
+
+      <!-- ── Body ──────────────────────────────────────────────────────── -->
+      <tbody class="product-list__tbody">
+
+      <!-- Loading skeleton rows -->
+        @if (loading()) {
+          @for (_ of [1, 2, 3]; track $index) {
+            <tr class="product-list__row product-list__row--skeleton">
+              <td class="product-list__td product-list__td--img">
+                <span class="product-list__skeleton product-list__skeleton--img"></span>
+              </td>
+              <td class="product-list__td product-list__td--name">
+                <span class="product-list__skeleton product-list__skeleton--name"></span>
+                <span class="product-list__skeleton product-list__skeleton--mat"></span>
+              </td>
+              @for (__ of [1,2,3,4,5]; track $index) {
+                <td class="product-list__td">
+                  <span class="product-list__skeleton product-list__skeleton--cell"></span>
+                </td>
+              }
+              <td class="product-list__td"></td>
+            </tr>
+          }
+
+          <!-- Empty state -->
+        } @else if (isEmpty()) {
+          <tr class="product-list__row product-list__row--empty">
+            <td class="product-list__td product-list__td--empty" colspan="9">
+              <div class="product-list__empty">
+                <svg class="product-list__empty-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M3 9h18" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M9 21V9" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                <p class="product-list__empty-text">No products yet</p>
+                <p class="product-list__empty-hint">Configure parameters in the form and calculate a price to add your first product.</p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Data rows -->
+        } @else {
+          @for (product of products(); track trackById($index, product)) {
+            <tr
+              class="product-list__row"
+              [class.product-list__row--pending]="product.status === 'Pending'"
+            >
+
+              <!-- Image -->
+              <td class="product-list__td product-list__td--img">
+                <div class="product-list__img-cell">
+                  @if (product.imagePreview) {
+                    <img
+                      class="product-list__img"
+                      [src]="product.imagePreview"
+                      [alt]="product.name"
+                    />
+                  } @else {
+                    <div class="product-list__img-placeholder" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                        <path d="M3 16l5-5 4 4 3-3 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                  }
+                </div>
+              </td>
+
+              <!-- Name / Material -->
+              <td class="product-list__td product-list__td--name">
+                <span class="product-list__product-name">{{ product.name }}</span>
+                <span class="product-list__product-mat">{{ product.material }}</span>
+              </td>
+
+              <!-- Layer H -->
+              <td class="product-list__td product-list__td--lh">
+                <span class="product-list__value">{{ formatMm(product.layerHeight) }}</span>
+              </td>
+
+              <!-- Layer W -->
+              <td class="product-list__td product-list__td--lw">
+                <span class="product-list__value">{{ formatMm(product.layerWidth) }}</span>
+              </td>
+
+              <!-- Mass -->
+<!--              <td class="product-list__td product-list__td&#45;&#45;mass">-->
+<!--                <span class="product-list__value">{{ formatMass(product?.mass) }}</span>-->
+<!--              </td>-->
+
+              <!-- Plastic type pill -->
+              <td class="product-list__td product-list__td--type">
+                <span
+                  class="product-list__pill"
+                  [class.product-list__pill--standard]="product.plasticType === 'Standard'"
+                  [class.product-list__pill--engineering]="product.plasticType === 'Engineering'"
+                  [class.product-list__pill--flexible]="product.plasticType === 'Flexible'"
+                >
+                  {{ product.plasticType }}
+                </span>
+              </td>
+
+              <!-- Price -->
+              <td class="product-list__td product-list__td--price">
+                <span class="product-list__price">{{ formatPrice(product.price) }}</span>
+              </td>
+
+              <!-- Status badge -->
+              <td class="product-list__td product-list__td--status">
+                <span
+                  class="product-list__badge"
+                  [class.product-list__badge--created]="product.status === 'Created'"
+                  [class.product-list__badge--pending]="product.status === 'Pending'"
+                >
+                  {{ product.status }}
+                </span>
+              </td>
+
+            </tr>
+          }
+        }
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Footer hint ────────────────────────────────────────────────────── -->
+  @if (!loading() && !isEmpty()) {
+    <p class="product-list__hint">
+      Click ✕ to remove&nbsp; · &nbsp;State persisted in NgRx Store
+    </p>
+  }
+
+</section>
+

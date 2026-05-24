@@ -1,0 +1,353 @@
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Keyframes
+// ─────────────────────────────────────────────────────────────────────────────
+@keyframes pl-shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+@keyframes pl-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mixins
+// ─────────────────────────────────────────────────────────────────────────────
+@mixin respond-to($bp) {
+  @if $bp == sm  { @media (min-width: 480px)  { @content; } }
+  @if $bp == md  { @media (min-width: 768px)  { @content; } }
+  @if $bp == lg  { @media (min-width: 1024px) { @content; } }
+  @if $bp == xl  { @media (min-width: 1280px) { @content; } }
+}
+
+@mixin skeleton-pulse {
+  border-radius: var(--pf-radius-sm);
+  background: linear-gradient(
+      90deg,
+      var(--pf-color-card)         25%,
+      rgba(255, 255, 255, 0.05)    50%,
+      var(--pf-color-card)         75%
+  );
+  background-size: 1200px 100%;
+  animation: pl-shimmer 1.8s infinite linear;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Block: product-list
+// ─────────────────────────────────────────────────────────────────────────────
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-space-6);
+  font-family: var(--pf-font-body);
+  color: var(--pf-color-text-primary);
+  background: var(--pf-color-bg);
+  padding: var(--pf-space-6) var(--pf-space-4);
+
+  @include respond-to(md) {
+    padding: var(--pf-space-8) var(--pf-space-6);
+  }
+
+  @include respond-to(xl) {
+    padding: var(--pf-space-8) var(--pf-space-12);
+  }
+
+  // ── Element: table-wrap ────────────────────────────────────────────────────
+  &__table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--pf-radius-lg);
+    box-shadow: var(--pf-shadow-card);
+
+    // Subtle scrollbar styling
+    &::-webkit-scrollbar        { height: 4px; }
+    &::-webkit-scrollbar-track  { background: var(--pf-color-surface); }
+    &::-webkit-scrollbar-thumb  { background: var(--pf-color-border); border-radius: 2px; }
+  }
+
+  // ── Element: table ────────────────────────────────────────────────────────
+  &__table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    font-size: var(--pf-fs-base);
+  }
+
+  // ── Element: thead ────────────────────────────────────────────────────────
+  &__thead {
+    background: var(--pf-color-card);
+  }
+
+  &__head-row {
+    border-radius: var(--pf-radius-lg) var(--pf-radius-lg) 0 0;
+  }
+
+  // ── Element: th ───────────────────────────────────────────────────────────
+  &__th {
+    padding: var(--pf-space-3) var(--pf-space-4);
+    text-align: left;
+    font-size: var(--pf-fs-2xs);
+    font-weight: var(--pf-fw-medium);
+    color: var(--pf-color-text-muted);
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    // Column width hints
+    &--img     { width: 64px; }
+    &--name    { min-width: 180px; }
+    &--lh,
+    &--lw      { width: 90px; }
+    &--mass    { width: 70px; }
+    &--type    { width: 110px; }
+    &--price   { width: 90px; }
+    &--status  { width: 90px; }
+    &--actions { width: 40px; }
+  }
+
+  // ── Element: tbody ────────────────────────────────────────────────────────
+  &__tbody {}
+
+  // ── Element: row ──────────────────────────────────────────────────────────
+  &__row {
+    background: var(--pf-color-surface);
+    border-top: 1px solid var(--pf-color-border);
+    transition: background var(--pf-transition-fast);
+    animation: pl-fade-in var(--pf-transition-normal) both;
+
+    &:hover:not(&--skeleton):not(&--empty) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    // Modifier: pending status row — subtle left accent
+    &--pending {
+      border-left: 2px solid var(--pf-color-orange);
+    }
+
+    // Modifier: skeleton loading row
+    &--skeleton {
+      pointer-events: none;
+    }
+
+    // Modifier: empty state row
+    &--empty {
+      background: transparent;
+      border: none;
+    }
+  }
+
+  // ── Element: td ───────────────────────────────────────────────────────────
+  &__td {
+    padding: var(--pf-space-3) var(--pf-space-4);
+    vertical-align: middle;
+
+    &--empty {
+      padding: var(--pf-space-10) var(--pf-space-4);
+    }
+  }
+
+  // ── Element: img-cell ─────────────────────────────────────────────────────
+  &__img-cell {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+  }
+
+  &__img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: var(--pf-radius-md);
+    display: block;
+  }
+
+  &__img-placeholder {
+    width: 48px;
+    height: 48px;
+    background: var(--pf-color-card);
+    border-radius: var(--pf-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pf-color-text-muted);
+  }
+
+  // ── Element: product name / material ──────────────────────────────────────
+  &__product-name {
+    display: block;
+    font-size: var(--pf-fs-base);
+    font-weight: var(--pf-fw-medium);
+    color: var(--pf-color-text-primary);
+    line-height: var(--pf-lh-normal);
+  }
+
+  &__product-mat {
+    display: block;
+    font-size: var(--pf-fs-xs);
+    font-weight: var(--pf-fw-medium);
+    color: var(--pf-color-orange);
+    margin-top: var(--pf-space-1);
+    letter-spacing: 0.3px;
+  }
+
+  // ── Element: generic numeric value ────────────────────────────────────────
+  &__value {
+    font-size: var(--pf-fs-sm);
+    color: var(--pf-color-text-sec);
+    font-variant-numeric: tabular-nums;
+  }
+
+  // ── Element: price ────────────────────────────────────────────────────────
+  &__price {
+    font-size: var(--pf-fs-md);
+    font-weight: var(--pf-fw-semibold);
+    color: var(--pf-color-text-primary);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.3px;
+  }
+
+  // ── Element: pill (plastic type) ──────────────────────────────────────────
+  &__pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px var(--pf-space-2);
+    border-radius: var(--pf-radius-pill);
+    font-size: var(--pf-fs-2xs);
+    font-weight: var(--pf-fw-medium);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+
+    // Modifier: standard plastic
+    &--standard {
+      background: var(--pf-color-green-bg);
+      color: var(--pf-color-green);
+    }
+
+    // Modifier: engineering plastic
+    &--engineering {
+      background: rgba(138, 134, 128, 0.14);
+      color: var(--pf-color-text-sec);
+    }
+
+    // Modifier: flexible plastic
+    &--flexible {
+      background: var(--pf-color-orange-light);
+      color: var(--pf-color-orange);
+    }
+  }
+
+  // ── Element: badge (status) ───────────────────────────────────────────────
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px var(--pf-space-2);
+    border-radius: var(--pf-radius-pill);
+    font-size: var(--pf-fs-2xs);
+    font-weight: var(--pf-fw-medium);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+
+    // Modifier: created
+    &--created {
+      background: var(--pf-color-green-bg);
+      color: var(--pf-color-green);
+    }
+
+    // Modifier: pending
+    &--pending {
+      background: var(--pf-color-orange-light);
+      color: var(--pf-color-orange);
+    }
+  }
+
+  // ── Element: remove button ────────────────────────────────────────────────
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--pf-radius-sm);
+    color: var(--pf-color-text-muted);
+    cursor: pointer;
+    transition:
+      background var(--pf-transition-fast),
+      border-color var(--pf-transition-fast),
+      color var(--pf-transition-fast);
+
+    &:hover {
+      background: var(--pf-color-orange-light);
+      border-color: var(--pf-color-orange);
+      color: var(--pf-color-orange);
+    }
+
+    &:active {
+      transform: scale(0.92);
+    }
+  }
+
+  // ── Element: empty state ──────────────────────────────────────────────────
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--pf-space-3);
+    padding: var(--pf-space-8) 0;
+    text-align: center;
+  }
+
+  &__empty-icon {
+    color: var(--pf-color-text-muted);
+    opacity: 0.6;
+  }
+
+  &__empty-text {
+    font-size: var(--pf-fs-md);
+    font-weight: var(--pf-fw-medium);
+    color: var(--pf-color-text-sec);
+    margin: 0;
+  }
+
+  &__empty-hint {
+    font-size: var(--pf-fs-sm);
+    color: var(--pf-color-text-muted);
+    max-width: 340px;
+    line-height: var(--pf-lh-loose);
+    margin: 0;
+  }
+
+  // ── Element: footer hint ──────────────────────────────────────────────────
+  &__hint {
+    font-size: var(--pf-fs-xs);
+    color: var(--pf-color-text-muted);
+    margin: 0;
+  }
+
+  // ── Element: screen-reader only text ──────────────────────────────────────
+  &__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  // ── Element: skeleton shapes ──────────────────────────────────────────────
+  &__skeleton {
+    display: block;
+    @include skeleton-pulse;
+
+    &--img  { width: 48px; height: 48px; border-radius: var(--pf-radius-md); }
+    &--name { width: 130px; height: 13px; margin-bottom: var(--pf-space-2); }
+    &--mat  { width: 48px;  height: 10px; }
+    &--cell { width: 56px;  height: 12px; }
+  }
+}

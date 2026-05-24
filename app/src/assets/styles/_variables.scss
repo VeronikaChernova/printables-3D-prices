@@ -1,0 +1,72 @@
+:root {
+  // Palette
+  --pf-color-bg:           #1a1a1a;
+  --pf-color-surface:      #1f1f1f;
+  --pf-color-card:         #262626;
+  --pf-color-navbar:       #161616;
+  --pf-color-input-bg:     #212121;
+
+  --pf-color-orange:       #e87030;
+  --pf-color-orange-dark:  #c5531a;
+  --pf-color-orange-light: rgba(232, 112, 48, 0.12);
+
+  --pf-color-border:       #3a3a3a;
+  --pf-color-border-focus: #e87030;
+
+  --pf-color-text-primary: #fafaf8;
+  --pf-color-text-sec:     #8a8680;
+  --pf-color-text-muted:   #6b6560;
+  --pf-color-text-white:   #ffffff;
+
+  // Typography
+  --pf-font-display:  'Barlow Condensed', sans-serif;
+  --pf-font-body:     'DM Sans', sans-serif;
+
+  --pf-fs-2xs:   10px;
+  --pf-fs-xs:    11px;
+  --pf-fs-sm:    12px;
+  --pf-fs-base:  13px;
+  --pf-fs-md:    14px;
+  --pf-fs-lg:    16px;
+  --pf-fs-xl:    22px;
+  --pf-fs-2xl:   32px;
+  --pf-fs-3xl:   42px;
+
+  --pf-fw-regular:   400;
+  --pf-fw-medium:    500;
+  --pf-fw-semibold:  600;
+  --pf-fw-extrabold: 800;
+
+  --pf-lh-tight:  1.1;
+  --pf-lh-normal: 1.4;
+  --pf-lh-loose:  1.6;
+
+  // Spacing scale
+  --pf-space-1:   4px;
+  --pf-space-2:   8px;
+  --pf-space-3:  12px;
+  --pf-space-4:  16px;
+  --pf-space-5:  20px;
+  --pf-space-6:  24px;
+  --pf-space-7:  28px;
+  --pf-space-8:  32px;
+  --pf-space-10: 40px;
+  --pf-space-12: 48px;
+  --pf-space-16: 64px;
+
+  // Radii
+  --pf-radius-sm:  4px;
+  --pf-radius-md:  6px;
+  --pf-radius-lg:  8px;
+  --pf-radius-xl: 12px;
+  --pf-radius-pill: 999px;
+
+  // Shadows
+  --pf-shadow-card: 0 2px 24px rgba(0, 0, 0, 0.48);
+  --pf-shadow-input: 0 0 0 3px rgba(232, 112, 48, 0.22);
+
+  // Transitions
+  --pf-transition-fast:   120ms ease;
+  --pf-transition-normal: 220ms ease;
+  --pf-transition-slow:   360ms ease;
+}
